@@ -1,1 +1,232 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GAMEZONE</title><link rel="stylesheet" href="style.css"></head><body><header><div class="brand">🎮 GAME<span>ZONE</span></div></header><main><section class="hero"><p>موقع ألعابك</p><h1>العب. اكتشف. استمتع.</h1><div class="search">🔎 <input id="search" placeholder="ابحث عن لعبة..."></div></section><section><h2>الألعاب المميزة ⭐</h2><div id="featured" class="grid"></div></section><section><h2>التصنيفات</h2><div id="cats" class="cats"></div></section><section id="games"><h2>أحدث الألعاب</h2><div id="all" class="grid"></div></section></main><script>const games=[{id:1,title:"تفادي السيارات",cat:"سيارات",emoji:"🏎️",type:"dodge",featured:true},{id:2,title:"قفزة النينجا",cat:"مغامرات",emoji:"🥷",type:"jump",featured:true},{id:3,title:"ركلة الهدف",cat:"رياضة",emoji:"⚽",type:"tap",featured:true},{id:4,title:"اختبار السرعة",cat:"ألغاز",emoji:"⚡",type:"reaction",featured:false},{id:5,title:"سباق السرعة",cat:"سيارات",emoji:"🚗",type:"dodge",featured:false},{id:6,title:"محارب الساحة",cat:"أكشن",emoji:"⚔️",type:"reaction",featured:false}];function card(g){return `<article class="card" onclick="location.href='game.html?id=${g.id}'"><div class="thumb">${g.emoji}</div><div class="info"><b>${g.title}</b><span>${g.cat}</span><button>العب الآن</button></div></article>`}function render(a=games){featured.innerHTML=games.filter(x=>x.featured).map(card).join('');all.innerHTML=a.map(card).join('')}cats.innerHTML=[...new Set(games.map(x=>x.cat))].map(c=>`<button onclick="render(games.filter(x=>x.cat==='${c}'))">${c}</button>`).join('');search.oninput=()=>render(games.filter(x=>(x.title+x.cat).toLowerCase().includes(search.value.toLowerCase())));render();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameZone - Racing</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #111;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    touch-action: none;
+}
+
+#game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 500px;
+    margin: auto;
+    background: #333;
+    overflow: hidden;
+}
+
+#road {
+    position: absolute;
+    width: 70%;
+    height: 100%;
+    left: 15%;
+    background: #444;
+    border-left: 8px solid #fff;
+    border-right: 8px solid #fff;
+}
+
+.line {
+    position: absolute;
+    width: 8px;
+    height: 100px;
+    background: white;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#player {
+    position: absolute;
+    width: 45px;
+    height: 75px;
+    background: #e53935;
+    border-radius: 10px;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.enemy {
+    position: absolute;
+    width: 45px;
+    height: 75px;
+    background: #2196f3;
+    border-radius: 10px;
+}
+
+#score {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#controls {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    z-index: 20;
+}
+
+button {
+    width: 100px;
+    height: 60px;
+    font-size: 35px;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+    <div id="road"></div>
+
+    <div id="score">Score: 0</div>
+
+    <div id="player"></div>
+
+    <div id="controls">
+        <button id="left">←</button>
+        <button id="right">→</button>
+    </div>
+
+</div>
+
+<script>
+
+const game = document.getElementById("game");
+const player = document.getElementById("player");
+const scoreText = document.getElementById("score");
+
+let playerX = 50;
+let score = 0;
+let speed = 5;
+let enemies = [];
+
+function movePlayer(direction) {
+
+    playerX += direction * 5;
+
+    if (playerX < 18) playerX = 18;
+    if (playerX > 82) playerX = 82;
+
+    player.style.left = playerX + "%";
+}
+
+document.getElementById("left").addEventListener("touchstart", () => {
+    movePlayer(-1);
+});
+
+document.getElementById("right").addEventListener("touchstart", () => {
+    movePlayer(1);
+});
+
+document.addEventListener("keydown", e => {
+
+    if (e.key === "ArrowLeft") {
+        movePlayer(-1);
+    }
+
+    if (e.key === "ArrowRight") {
+        movePlayer(1);
+    }
+
+});
+
+function createEnemy() {
+
+    const enemy = document.createElement("div");
+
+    enemy.className = "enemy";
+
+    enemy.style.left =
+        (25 + Math.random() * 50) + "%";
+
+    enemy.style.top = "-100px";
+
+    game.appendChild(enemy);
+
+    enemies.push(enemy);
+}
+
+function collision(a, b) {
+
+    const r1 = a.getBoundingClientRect();
+    const r2 = b.getBoundingClientRect();
+
+    return !(
+        r1.bottom < r2.top ||
+        r1.top > r2.bottom ||
+        r1.right < r2.left ||
+        r1.left > r2.right
+    );
+}
+
+function gameLoop() {
+
+    enemies.forEach((enemy, index) => {
+
+        let y = parseFloat(enemy.style.top);
+
+        y += speed;
+
+        enemy.style.top = y + "px";
+
+        if (collision(player, enemy)) {
+
+            alert("Game Over! Score: " + score);
+
+            location.reload();
+        }
+
+        if (y > window.innerHeight) {
+
+            enemy.remove();
+
+            enemies.splice(index, 1);
+
+            score++;
+
+            scoreText.textContent =
+                "Score: " + score;
+
+            if (score % 10 === 0) {
+                speed += 1;
+            }
+        }
+    });
+
+    requestAnimationFrame(gameLoop);
+}
+
+setInterval(createEnemy, 1200);
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
