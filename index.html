@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GAMEZONE - ألعاب</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="brand">🎮 GAME<span>ZONE</span></div><button onclick="document.getElementById('search').focus()">⌕</button></header>
+<main>
+<section class="hero"><p>موقع ألعاب مجاني</p><h1>العب. اكتشف. استمتع.</h1><div class="search">🔎 <input id="search" placeholder="ابحث عن لعبة..."></div></section>
+<section><div class="head"><h2>الألعاب المميزة ⭐</h2></div><div id="featured" class="grid"></div></section>
+<section><div class="head"><h2>التصنيفات</h2></div><div id="cats" class="cats"></div></section>
+<section id="games"><div class="head"><h2>أحدث الألعاب</h2><span id="count"></span></div><div id="all" class="grid"></div></section>
+</main>
+<nav><button class="active">⌂<small>الرئيسية</small></button><button onclick="location.href='game.html?id=1'">🎮<small>لعبة</small></button><button onclick="document.getElementById('search').focus()">⌕<small>بحث</small></button></nav>
+<script>
+const games=[
+{id:1,title:"تفادي السيارات",cat:"سيارات",emoji:"🏎️",featured:true,desc:"قد سيارتك وتفادَ السيارات القادمة."},
+{id:2,title:"محارب الساحة",cat:"أكشن",emoji:"⚔️",featured:true,desc:"اختبر سرعتك وردة فعلك."},
+{id:3,title:"ركلة الهدف",cat:"رياضة",emoji:"⚽",featured:false,desc:"اضغط في الوقت المناسب وسجل الهدف."},
+{id:4,title:"لغز الألوان",cat:"ألغاز",emoji:"🧩",featured:false,desc:"اختر اللون الصحيح بأسرع وقت."},
+{id:5,title:"سباق السرعة",cat:"سيارات",emoji:"🚗",featured:true,desc:"حاول تحطيم رقمك القياسي."},
+{id:6,title:"مهمة النينجا",cat:"مغامرات",emoji:"🥷",featured:false,desc:"اقفز وتجنب العقبات."}
+];
+function card(g){return `<article class="card" onclick="location.href='game.html?id=${g.id}'"><div class="thumb">${g.emoji}</div><div class="info"><b>${g.title}</b><span>${g.cat}</span><button>العب الآن</button></div></article>`}
+function render(list=games){featured.innerHTML=games.filter(g=>g.featured).map(card).join("");all.innerHTML=list.map(card).join("");count.textContent=list.length+" ألعاب"}
+cats.innerHTML=[...new Set(games.map(g=>g.cat))].map(c=>`<button onclick="filterCat('${c}')">🎮 ${c}</button>`).join("");
+function filterCat(c){render(games.filter(g=>g.cat===c));document.getElementById("games").scrollIntoView()}
+search.oninput=()=>{let q=search.value.toLowerCase();render(games.filter(g=>(g.title+g.cat).toLowerCase().includes(q)))}
+render();
+</script>
+</body></html>
